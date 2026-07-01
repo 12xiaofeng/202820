@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八卦翻牌点名</title>
+    <title>八卦翻牌随机点名</title>
     <style>
         body {
             margin: 0;
@@ -11,7 +11,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #1a1a1a;
+            background: #0a192f;
             font-family: 'LiSu', '隶书', cursive;
         }
 
@@ -65,15 +65,92 @@
             writing-mode: vertical-rl;
         }
 
+        /* 饕餮纹装饰边框 */
+        .taotie-border {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 3px solid #b8860b;
+            border-radius: 10px;
+            pointer-events: none;
+            /* 四角饕餮纹装饰 */
+            background: 
+                /* 左上角 */
+                linear-gradient(135deg, transparent 25px, #b8860b 25px, #b8860b 27px, transparent 27px) top left,
+                linear-gradient(135deg, transparent 20px, #1a1a1a 20px, #1a1a1a 22px, transparent 22px) top left,
+                /* 右上角 */
+                linear-gradient(225deg, transparent 25px, #b8860b 25px, #b8860b 27px, transparent 27px) top right,
+                linear-gradient(225deg, transparent 20px, #1a1a1a 20px, #1a1a1a 22px, transparent 22px) top right,
+                /* 左下角 */
+                linear-gradient(45deg, transparent 25px, #b8860b 25px, #b8860b 27px, transparent 27px) bottom left,
+                linear-gradient(45deg, transparent 20px, #1a1a1a 20px, #1a1a1a 22px, transparent 22px) bottom left,
+                /* 右下角 */
+                linear-gradient(315deg, transparent 25px, #b8860b 25px, #b8860b 27px, transparent 27px) bottom right,
+                linear-gradient(315deg, transparent 20px, #1a1a1a 20px, #1a1a1a 22px, transparent 22px) bottom right;
+            background-size: 50px 50px;
+            background-repeat: no-repeat;
+            /* 四边中点装饰 */
+            box-shadow: 
+                /* 上边中点 */
+                0 0 0 0 transparent,
+                /* 内阴影 */
+                inset 0 0 20px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(184, 134, 11, 0.1),
+                /* 外发光 */
+                0 0 15px rgba(184, 134, 11, 0.2);
+        }
+
+        /* 四边中点的饕餮纹装饰 */
+        .taotie-border::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 16px;
+            background: 
+                radial-gradient(circle at 7px 8px, #b8860b 2px, transparent 2px),
+                radial-gradient(circle at 23px 8px, #b8860b 2px, transparent 2px),
+                linear-gradient(to bottom, transparent 6px, #b8860b 6px, #b8860b 8px, transparent 8px);
+        }
+
+        .taotie-border::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 16px;
+            background: 
+                radial-gradient(circle at 7px 8px, #b8860b 2px, transparent 2px),
+                radial-gradient(circle at 23px 8px, #b8860b 2px, transparent 2px),
+                linear-gradient(to top, transparent 6px, #b8860b 6px, #b8860b 8px, transparent 8px);
+        }
+
+        /* 文字样式 */
         .symbol {
             font-size: 9rem;
             color: #FFD700;
             margin-bottom: 10px;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .gua-name {
             font-size: 7rem;
             color: #FFD700;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                0 0 20px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .name {
@@ -81,6 +158,11 @@
             color: white;
             font-size: 8rem;
             text-align: center;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.3),
+                0 0 20px rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
 
         #firework {
@@ -95,14 +177,22 @@
     <div class="container">
         <div class="card" onclick="flipCard(this)">
             <div class="card-inner">
-                <div class="card-face front"></div>
-                <div class="card-face back"></div>
+                <div class="card-face front">
+                    <div class="taotie-border"></div>
+                </div>
+                <div class="card-face back">
+                    <div class="taotie-border"></div>
+                </div>
             </div>
         </div>
         <div class="card" onclick="flipCard(this)">
             <div class="card-inner">
-                <div class="card-face front"></div>
-                <div class="card-face back"></div>
+                <div class="card-face front">
+                    <div class="taotie-border"></div>
+                </div>
+                <div class="card-face back">
+                    <div class="taotie-border"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -123,7 +213,7 @@
         ];
 
         let usedGuas = [];
-        let usedNames = [];  // 新增：追踪已抽取的人名
+        let usedNames = [];
         
         function getRandomGuas() {
             if(usedGuas.length >= guas.length) usedGuas = [];
@@ -141,6 +231,7 @@
             const guaPair = getRandomGuas();
             document.querySelectorAll('.front').forEach((front, index) => {
                 front.innerHTML = `
+                    <div class="taotie-border"></div>
                     <div class="symbol">${guaPair[index].symbol}</div>
                     <div class="gua-name">${guaPair[index].name}</div>
                 `;
@@ -150,23 +241,20 @@
         function flipCard(card) {
             if(card.classList.contains('flipped')) return;
             
-            // 当所有人名都被抽过一遍时，自动重置名单
             if(usedNames.length >= names.length) {
                 usedNames = [];
             }
             
-            // 筛选出还没被抽过的人名
             const availableNames = names.filter(name => !usedNames.includes(name));
-            
-            // 从可用名单中随机抽取一个
             const randomIndex = Math.floor(Math.random() * availableNames.length);
             const selectedName = availableNames[randomIndex];
-            
-            // 将抽中的人名记录到已用名单中
             usedNames.push(selectedName);
             
             const back = card.querySelector('.back');
-            back.innerHTML = `<div class="name">${selectedName}</div>`;
+            back.innerHTML = `
+                <div class="taotie-border"></div>
+                <div class="name">${selectedName}</div>
+            `;
             
             card.classList.add('flipped');
             createFirework();
