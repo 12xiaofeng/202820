@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八卦翻牌随机点名</title>
+    <title>八卦翻牌点名</title>
     <style>
         body {
             margin: 0;
@@ -123,6 +123,7 @@
         ];
 
         let usedGuas = [];
+        let usedNames = [];  // 新增：追踪已抽取的人名
         
         function getRandomGuas() {
             if(usedGuas.length >= guas.length) usedGuas = [];
@@ -149,8 +150,23 @@
         function flipCard(card) {
             if(card.classList.contains('flipped')) return;
             
+            // 当所有人名都被抽过一遍时，自动重置名单
+            if(usedNames.length >= names.length) {
+                usedNames = [];
+            }
+            
+            // 筛选出还没被抽过的人名
+            const availableNames = names.filter(name => !usedNames.includes(name));
+            
+            // 从可用名单中随机抽取一个
+            const randomIndex = Math.floor(Math.random() * availableNames.length);
+            const selectedName = availableNames[randomIndex];
+            
+            // 将抽中的人名记录到已用名单中
+            usedNames.push(selectedName);
+            
             const back = card.querySelector('.back');
-            back.innerHTML = `<div class="name">${names[Math.floor(Math.random()*names.length)]}</div>`;
+            back.innerHTML = `<div class="name">${selectedName}</div>`;
             
             card.classList.add('flipped');
             createFirework();
